@@ -29,10 +29,15 @@ TARGETS += mplek_25.5mm.stl
 TARGETS += mplek_26.0mm.stl
 TARGETS += mplek_26.5mm.stl
 
+TARGETS += mstamp.stl
+
 all: $(TARGETS)
 
 mplek_%mm.stl: mplek.py
 	blender -P $< -- $* $@
+
+mstamp.stl: mstamp.py
+	blender -P $< -- $@
 
 clean:
 	rm -f $(TARGETS)
