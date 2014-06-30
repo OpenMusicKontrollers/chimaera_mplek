@@ -14,15 +14,18 @@ from math import pi, sin, cos
 
 D = float(sys.argv[4]) # diameter of 2nd phalanx
 T = 1 # wall thickness
-N = 8 # number of edges of polygonal prism
+B = 1 # bevel thickness
+N = 12 # number of edges of polygonal prism
 P = pi/N # edge angle of polygonal prism
+
+prec = 1.01
 
 W = 4 # width of bar magnet
 H = 3 # height of bar magnet
 L = 20 # length of bar magnet
 
 R0 = D/2 # radius of 2nd phalanx
-R1 = R0+T+H/2 # minimal radius of polygonal prism
+R1 = R0+1.5*T+H/2 # minimal radius of polygonal prism
 R2 = R1/cos(P) # maximal radius of polygonal prism
 
 C = 6 # diameter of circular magnet
@@ -35,18 +38,18 @@ for item in bpy.data.objects:
 bpy.ops.object.delete()
 
 # create inner cyclinder, aka virtual finger
-bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=R0, depth=L, location=cen)
+bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=R0, depth=L, location=(-(H+T)/2,0,0))
 inner = bpy.context.active_object
 inner.name = "inner"
 
 # create bar magnet
-bpy.ops.mesh.primitive_cube_add(location=(R1, 0, 0))
+bpy.ops.mesh.primitive_cube_add(location=(R1-T-H/2, 0, 0))
 bar = bpy.context.active_object
 bar.name = "bar"
-bpy.ops.transform.resize(value=(H/2, W/2, L/2))
+bpy.ops.transform.resize(value=(H/2*prec, W/2*prec, L/2*prec))
 
 # create cylinder magnet
-bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=C/2, depth=T*3, location=(R1-T*1.5-H/2, 0, 0), rotation=(0,pi/2,0))
+bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=C/2*prec, depth=T*2, location=(R1-T*2-H, 0, 0), rotation=(0,pi/2,0))
 cyl = bpy.context.active_object
 cyl.name = "cyl"
 cyl.select = False
@@ -89,14 +92,14 @@ outer.select = True
 bpy.ops.object.modifier_add(type="BEVEL")
 bevel = outer.modifiers["Bevel"]
 bevel.name = "bevel"
-bevel.width = T
+bevel.width = B
 bevel.segments = 1
 
-# add simple deform modifier
-bpy.ops.object.modifier_add(type="SIMPLE_DEFORM")
-simple = outer.modifiers["SimpleDeform"]
-simple.name = "simple"
-simple.angle = P
+## add simple deform modifier
+#bpy.ops.object.modifier_add(type="SIMPLE_DEFORM")
+#simple = outer.modifiers["SimpleDeform"]
+#simple.name = "simple"
+#simple.angle = P
 
 # subtract inner from outer cylinder
 bpy.ops.object.modifier_add(type="BOOLEAN")

@@ -16,6 +16,18 @@ TARGETS += mplek_19.0mm.stl
 TARGETS += mplek_19.5mm.stl 
 TARGETS += mplek_20.0mm.stl 
 TARGETS += mplek_20.5mm.stl
+TARGETS += mplek_21.0mm.stl
+TARGETS += mplek_21.5mm.stl
+TARGETS += mplek_22.0mm.stl
+TARGETS += mplek_22.5mm.stl
+TARGETS += mplek_23.0mm.stl
+TARGETS += mplek_23.5mm.stl
+TARGETS += mplek_24.0mm.stl
+TARGETS += mplek_24.5mm.stl
+TARGETS += mplek_25.0mm.stl
+TARGETS += mplek_25.5mm.stl
+TARGETS += mplek_26.0mm.stl
+TARGETS += mplek_26.5mm.stl
 
 all: $(TARGETS)
 
