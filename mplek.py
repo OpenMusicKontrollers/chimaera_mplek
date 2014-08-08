@@ -28,8 +28,6 @@ R0 = D/2 # radius of 2nd phalanx
 R1 = R0+1.5*T+H/2 # minimal radius of polygonal prism
 R2 = R1/cos(P) # maximal radius of polygonal prism
 
-C = 6 # diameter of circular magnet
-
 cen = (0, 0, 0) # origin
 
 # clear scene
@@ -47,12 +45,6 @@ bpy.ops.mesh.primitive_cube_add(location=(R1-T-H/2, 0, 0))
 bar = bpy.context.active_object
 bar.name = "bar"
 bpy.ops.transform.resize(value=(H/2*prec, W/2*prec, L/2*prec))
-
-# create cylinder magnet
-bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=C/2*prec, depth=T*2, location=(R1-T*2-H, 0, 0), rotation=(0,pi/2,0))
-cyl = bpy.context.active_object
-cyl.name = "cyl"
-cyl.select = False
 
 # create partially cut polygonal prism
 P2 = P*2
@@ -95,12 +87,6 @@ bevel.name = "bevel"
 bevel.width = B
 bevel.segments = 1
 
-## add simple deform modifier
-#bpy.ops.object.modifier_add(type="SIMPLE_DEFORM")
-#simple = outer.modifiers["SimpleDeform"]
-#simple.name = "simple"
-#simple.angle = P
-
 # subtract inner from outer cylinder
 bpy.ops.object.modifier_add(type="BOOLEAN")
 sub_inner = outer.modifiers["Boolean"]
@@ -115,13 +101,14 @@ sub_bar.name = "sub_bar"
 sub_bar.operation = "DIFFERENCE"
 sub_bar.object = bar
 
-# subtract cyl from outer cylinder
-bpy.ops.object.modifier_add(type="BOOLEAN")
-sub_cyl = outer.modifiers["Boolean"]
-sub_cyl.name = "sub_cyl"
-sub_cyl.operation = "DIFFERENCE"
-sub_cyl.object = cyl
+# rotate 45°
+outer.select = True
+inner.select = True
+bar.select = True
+bpy.ops.transform.rotate(value=pi/4, axis=(0, 0, 1))
+inner.select = False
+bar.select = False
 
 # export to STL
-bpy.ops.export_mesh.stl(filepath=sys.argv[5], check_existing=False, ascii=True, use_mesh_modifiers=True)
+bpy.ops.wm.collada_export(filepath=sys.argv[5], selected=True, apply_modifiers=True)
 bpy.ops.wm.quit_blender()
