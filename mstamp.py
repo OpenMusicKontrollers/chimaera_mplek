@@ -108,6 +108,10 @@ scn.objects.unlink(stamp)
 scn.objects.unlink(bar)
 scn.objects.unlink(base)
 
-# export to STL
+# export to Collada
 bpy.ops.wm.collada_export(filepath=sys.argv[4], selected=True, apply_modifiers=True)
+
+# export to STL
+#bpy.ops.export_mesh.stl(filepath=sys.argv[4], check_existing=False, ascii=True, use_mesh_modifiers=True)
+
 bpy.ops.wm.quit_blender()
