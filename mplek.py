@@ -18,6 +18,8 @@ B = 1 # bevel thickness
 N = 12 # number of edges of polygonal prism
 P = pi/N # edge angle of polygonal prism
 
+# optimized for 'strong and flexible' material print at Shapeways
+# needs to be adapted for DIY filament printers
 prec = 1.01
 
 W = 4 # width of bar magnet
@@ -109,10 +111,11 @@ bpy.ops.transform.rotate(value=pi/4, axis=(0, 0, 1))
 inner.select = False
 bar.select = False
 
-# export to Collada
-bpy.ops.wm.collada_export(filepath=sys.argv[5], selected=True, apply_modifiers=True)
-
-# export to STL
-#bpy.ops.export_mesh.stl(filepath=sys.argv[5], check_existing=False, ascii=True, use_mesh_modifiers=True)
+if(sys.argv[5].endswith(".dae")):
+	# export to Collada
+	bpy.ops.wm.collada_export(filepath=sys.argv[5], selected=True, apply_modifiers=True)
+elif(sys.argv[5].endswith(".stl")):
+	# export to STL
+	bpy.ops.export_mesh.stl(filepath=sys.argv[5], check_existing=False, ascii=True, use_mesh_modifiers=True)
 
 bpy.ops.wm.quit_blender()
