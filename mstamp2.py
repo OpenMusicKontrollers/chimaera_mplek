@@ -20,9 +20,13 @@ H = 3 # height of bar magnet
 L = 20 # length of bar magnet
 
 R0 = 3
-L0 = 50
+S0 = 0.4
+SG = 64
 
-R1 = 6
+R1 = 15
+L1 = R1
+S1 = S0/2
+O1 = R1*S1 + 0.35
 
 # clear scene
 for item in bpy.data.objects:
@@ -30,18 +34,25 @@ for item in bpy.data.objects:
 bpy.ops.object.delete()
 
 # create knob
-bpy.ops.mesh.primitive_uv_sphere_add(size=R1, location=(0, 0, L0))
+bpy.ops.mesh.primitive_uv_sphere_add(segments=SG, size=R1, location=(0, 0, L1))
 knob = bpy.context.active_object
 knob.name = "knob"
-bpy.ops.transform.resize(value=(0.5, 1, 1))
+bpy.ops.transform.resize(value=(S0, 1, 1))
 
-# create pistill
-bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=R0, depth=L0, location=(0, 0, L0/2))
-pistill = bpy.context.active_object
-pistill.name = "pistill"
+# create knob1a
+bpy.ops.mesh.primitive_uv_sphere_add(segments=SG, size=R1, location=(O1, 0, L1))
+knob1a = bpy.context.active_object
+knob1a.name = "knob1a"
+bpy.ops.transform.resize(value=(S1, 1, 1))
+
+# create knob1b
+bpy.ops.mesh.primitive_uv_sphere_add(segments=SG, size=R1, location=(-O1, 0, L1))
+knob1b = bpy.context.active_object
+knob1b.name = "knob1b"
+bpy.ops.transform.resize(value=(S1, 1, 1))
 
 # create stamp
-bpy.ops.mesh.primitive_uv_sphere_add(size=1, location=(0, 0, -H/2))
+bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=1, location=(0, 0, -H/2), rotation=(pi/2, 0, 0))
 stamp = bpy.context.active_object
 stamp.name = "stamp"
 bpy.ops.transform.resize(value=(W*1.2, L/2, H*2))
@@ -62,12 +73,19 @@ scn = bpy.context.scene
 scn.objects.active = knob
 knob.select = True
 
-# merge knob with pistill 
+# subtract knob1a from knob 
 bpy.ops.object.modifier_add(type="BOOLEAN")
-sub_knob1 = knob.modifiers["Boolean"]
-sub_knob1.name = "sub_knob1"
-sub_knob1.operation = "UNION"
-sub_knob1.object = pistill
+sub_knob1a = knob.modifiers["Boolean"]
+sub_knob1a.name = "sub_knob1a"
+sub_knob1a.operation = "DIFFERENCE"
+sub_knob1a.object = knob1a
+
+# subtract knob3 from knob 
+bpy.ops.object.modifier_add(type="BOOLEAN")
+sub_knob1b = knob.modifiers["Boolean"]
+sub_knob1b.name = "sub_knob1b"
+sub_knob1b.operation = "DIFFERENCE"
+sub_knob1b.object = knob1b
 
 # merge knob with stamp
 bpy.ops.object.modifier_add(type="BOOLEAN")
@@ -91,19 +109,15 @@ sub_knob4.operation = "DIFFERENCE"
 sub_knob4.object = base
 
 # apply modifiers
-bpy.ops.object.modifier_apply(modifier="sub_knob1")
-
-# rotate
-base.select = False
-bpy.ops.transform.rotate(value=-75/180*pi, axis=(1, 0, 0))
-bpy.ops.transform.translate(value=(0, 45, 14-50))
-
+bpy.ops.object.modifier_apply(modifier="sub_knob1a")
+bpy.ops.object.modifier_apply(modifier="sub_knob1b")
 bpy.ops.object.modifier_apply(modifier="sub_knob2")
 bpy.ops.object.modifier_apply(modifier="sub_knob3")
 bpy.ops.object.modifier_apply(modifier="sub_knob4")
 
 # unlink unneeded objects
-scn.objects.unlink(pistill)
+scn.objects.unlink(knob1a)
+scn.objects.unlink(knob1b)
 scn.objects.unlink(stamp)
 scn.objects.unlink(bar)
 scn.objects.unlink(base)

@@ -31,6 +31,8 @@ TARGETS += mplek_26.5mm
 
 TARGETS += mstamp
 
+TARGETS += mstamp2
+
 TARGETS_DAE := $(TARGETS:=.dae)
 TARGETS_STL := $(TARGETS:=.stl)
 
@@ -43,6 +45,15 @@ mplek_%mm.stl: mplek.py
 	blender -P $< -- $* $@
 
 mstamp.dae: mstamp.py
+	blender -P $< -- $@
+
+mstamp.stl: mstamp.py
+	blender -P $< -- $@
+
+mstamp2.dae: mstamp2.py
+	blender -P $< -- $@
+
+mstamp2.stl: mstamp2.py
 	blender -P $< -- $@
 
 clean:
